@@ -1,0 +1,290 @@
+{% extends 'default.html' %}
+{% load static %}
+
+{% load custom_tags %}
+
+{% block content %}
+
+    
+
+    <div class="wrapper advertisement">
+        <div class="content-wrapper advertisement">
+            <div id="modal" class="modal" onclick="hideModal();">
+                <div class="modal-content">
+                  <img id="modal-image">
+                </div>
+              </div>
+
+            <ul class="advertisement-tags">
+                <li class="advertisement-tags_item">{% if advertisement.status %}Открыто{% else %}Закрыто{% endif %}</li>
+                <li class="advertisement-tags_item">Дата: {{advertisement.creation_date |date:'d-m-y H:i'}}</li>
+                <li class="advertisement-tags_item">Время: {{advertisement.creation_date |date:'H:i'}}</li>
+                <li class="advertisement-tags_item">Слоты: {{advertisement.slots}}</li>
+                <li class="advertisement-tags_item">ID: {{advertisement.id}}</li>
+            </ul>
+            
+            <div class="advertisement-category">
+                {% for category in advertisement.category.all %}
+                    <div class="item-tag">
+                        {{category}}
+                    </div>
+                {% endfor %}
+            </div>
+            <h1>Author: {{advertisement.author}}</h1>
+            {% if request.user == advertisement.author.user %}
+            <div class="advertisement-own_header">
+                <h1 class="advertisement-header">{{advertisement.header}}</h1>
+                <div class="own-header_satistic">
+                        <img src="{% static 'images/messages.png' %}" alt="messages">
+                        <p>{{advertisement.response.all.count}}</p>
+                        <img src="{% static 'images/view.png' %}" alt="views">
+                        <p>{{advertisement.viewers.all.count}}</p>
+                </div>
+                <div class="own-header_buttons">
+                    {% if advertisement.state == 'IN' %}
+                        <button class="advertisement-button"><a  href="{% url 'responses' pk=advertisement.id %}">Отклики</a></button>
+                        <button class="advertisement-button"><a  href="{% url 'advertisement_update' pk=advertisement.id %}">Редактировать</a></button>
+                    {% endif %}
+                </div>
+            </div>
+            {% else %}
+            <h1 class="advertisement-header">{{advertisement.header}}</h1>
+            {% endif %}
+            <p href="" class="advertisement-body">{{advertisement.body}}</p>
+
+            {% if advertisement.state != 'FI' %}
+            <div class="advertisement-files">
+                {% if advertisement.header_image %}
+                    <div class="advertisement-files_file" style="background-image: url('{{ advertisement.header_image.url }}');" onclick="displayModal(this);"></div>
+                {% else %}
+                    <div class="advertisement-files_file empty"></div>
+                {% endif %}
+                <div class="vr"></div>
+
+                {% if advertisement.file_1 %}
+                    <!-- определяю вывод тега в переменную чтобы можно было работать с if -->
+                    {% file_define advertisement.file_1 as file %}
+                    <!-- дальше проверяю эту переменную на тип контента -->
+                    {% if file == 'video' %}
+                        <div class="advertisement-files_file">
+                            <video src="{{advertisement.file_1.url}}" controls></video>
+                        </div>
+                    {% elif file == 'image' %}
+                        <div class="advertisement-files_file image" style="background-image: url('{{advertisement.file_1.url}}');" onclick="displayModal(this);">
+                        </div>
+                    {% elif file == 'archive' %}
+                        <div class="advertisement-files_file archive">
+                            <a href="#" download="{{advertisement.file_1.url}}"></a>
+                        </div>
+                    {% elif file == 'document' %}
+                        <div class="advertisement-files_file document">
+                            <a href="#" download="{{advertisement.file_1.url}}"></a>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="advertisement-files_file empty"></div>
+                {% endif %}
+
+                <div class="vr"></div>
+
+                {% if advertisement.file_2 %}
+                    <!-- определяю вывод тега в переменную чтобы можно было работать с if -->
+                    {% file_define advertisement.file_2 as file %}
+                    <!-- дальше проверяю эту переменную на тип контента -->
+                    {% if file == 'video' %}
+                        <div class="advertisement-files_file">
+                            <video src="{{advertisement.file_2.url}}" controls></video>
+                        </div>
+                    {% elif file == 'image' %}
+                        <div class="advertisement-files_file image" style="background-image: url('{{advertisement.file_2.url}}');" onclick="displayModal(this);">
+                        </div>
+                    {% elif file == 'archive' %}
+                        <div class="advertisement-files_file archive">
+                            <a href="#" download="{{advertisement.file_2.url}}"></a>
+                        </div>
+                    {% elif file == 'document' %}
+                        <div class="advertisement-files_file document">
+                            <a href="#" download="{{advertisement.file_2.url}}"></a>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="advertisement-files_file empty"></div>
+                {% endif %}
+
+                <div class="vr"></div>
+
+                {% if advertisement.file_3 %}
+                    <!-- определяю вывод тега в переменную чтобы можно было работать с if -->
+                    {% file_define advertisement.file_3 as file %}
+                    <!-- дальше проверяю эту переменную на тип контента -->
+                    {% if file == 'video' %}
+                        <div class="advertisement-files_file">
+                            <video src="{{advertisement.file_3.url}}" controls></video>
+                        </div>
+                    {% elif file == 'image' %}
+                        <div class="advertisement-files_file image" style="background-image: url('{{advertisement.file_3.url}}');" onclick="displayModal(this);">
+                        </div>
+                    {% elif file == 'archive' %}
+                        <div class="advertisement-files_file archive">
+                            <a href="#" download="{{advertisement.file_3.url}}"></a>
+                        </div>
+                    {% elif file == 'document' %}
+                        <div class="advertisement-files_file document">
+                            <a href="#" download="{{advertisement.file_3.url}}"></a>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="advertisement-files_file empty"></div>
+                {% endif %}
+
+            </div>
+            {% endif %}
+            <!-- Если пользователь хозяин поста -->
+            {% if request.user.author == advertisement.author %}
+                
+                {% if advertisement.state == 'IN' %}
+                    {% if advertisement.status == False %}
+                        <p class="hr-m-bt-15"><a class="advertisement-button" href="{% url 'state_change' pk=advertisement.id %}">Завершить набор</a></p>
+                    {% endif %}
+                {% elif advertisement.state == 'UN' %}
+                    <h3><a href="{% url 'chat' pk=advertisement.chat_id %}" class="advertisement-chat_link">Чат</a> с пользователями будет автоматически <b style="color: brown;">удален</b> после подтверждения оценки</h3>
+                    <p class="hr-m-bt-15"><a class="advertisement-button" href="{% url 'state_change' pk=advertisement.id %}">Подтвердить оценку</a></p>
+                {% else %}
+                    <h1 class="hr-m-bt-15">Все пользователи успешно получили оценку</h1>
+                    <h2>Объявление закрыто</h2>
+                {% endif %}
+
+                <!-- Если состояние поста меняется с IN на любое другое / а так же запрещается работа всех методов Advertisement модели -->
+                {% if advertisement.state != 'IN' %}
+                    <!-- Оцените пользователей: -->
+                    <hr class="hr-m-bt-15">
+                    <div class="advertisement-accepted_users">
+                        <!-- Все отклики -->
+                        {% for author in advertisement.accepted_authors.all %}
+                            {% if author in advertisement.liked_authors.all %}
+                            <div class="accepted-user liked">
+                                <img class="accepted-user_photo" src="{{author.profile_photo.url}}" alt="" width="25px" height="25px">
+                                <p class="accepted-user_name" >{{author.user.username}}</p>
+                                {% if advertisement.state == 'FI' %}
+                                    <p >rating +1</p>
+                                {% else %}
+                                    <a href="{% url 'dislike' pk=advertisement.id author_id=author.id %}" class="user-dislike"><img src="{% static 'images/dislike.png' %}" alt="dislike" width="20px" height="20px"></a>
+                                {% endif %}
+                            </div>
+                            {% elif author in advertisement.disliked_authors.all %}
+                            <div class="accepted-user disliked">
+                                <img class="accepted-user_photo" src="{{author.profile_photo.url}}" alt="" width="25px" height="25px">
+                                <p class="accepted-user_name" >{{author.user.username}}</p>
+                                {% if advertisement.state == 'FI' %}
+                                    <p >rating -1</p>
+                                {% else %}
+                                    <a href="{% url 'like' pk=advertisement.id author_id=author.id %}" class="user-like"><img src="{% static 'images/like.png' %}" alt="like" width="20px" height="20px"></a>
+                                {% endif %}
+                            </div>
+                            {% else %}
+                            <div class="accepted-user">
+                                <img class="accepted-user_photo" src="{{author.profile_photo.url}}" alt="" width="25px" height="25px">
+                                <p class="accepted-user_name" >{{author.user.username}}</p>
+                                {% if advertisement.state == 'FI' %}
+                                    <p >{{author.rating}}</p>
+                                {% else %}
+                                    <a href="{% url 'dislike' pk=advertisement.id author_id=author.id %}" class="user-dislike"><img src="{% static 'images/dislike.png' %}" alt="dislike" width="20px" height="20px"></a>
+                                    <a href="{% url 'like' pk=advertisement.id author_id=author.id %}" class="user-like"><img src="{% static 'images/like.png' %}" alt="like" width="20px" height="20px"></a>
+                                {% endif %}
+                            </div>
+                            {% endif %}                            
+                        {% endfor %}
+                    </div>
+                <!-- Если сотояние поста IN  -->
+                {% else %}
+                    <div class="advertisement-accepted_users">
+                        <!-- Все отклики -->
+                        {% for author in advertisement.accepted_authors.all %}
+                            <div class="accepted-user">
+                                <img class="accepted-user_photo" src="{{author.profile_photo.url}}" alt="" width="25px" height="25px">
+                                <p class="accepted-user_name" >{{author.user.username}}</p>
+                                <p >{{author.rating}}</p>
+                                <img class="accepted-user_star" src="{% static 'images/star.png' %}" alt="" width="20px" height="20px">
+                                <a href="{% url 'remove' pk=advertisement.id author_id=author.id %}" class="accepted-user_remove"><img src="{% static 'images/close.png' %}" alt=""></a>
+                            </div>
+                        {% endfor %}
+                        {% if advertisement.status %}
+                            <div class="accepted-user accepted-user_invite">
+                                <a href="{% url 'responses' pk=advertisement.id %}">Доступно: {{advertisement.slots}}</a>
+                            </div>
+                        {% endif %}
+                    </div>  
+                {% endif %}
+            <!-- Если пользователь не хозяяин поста -->
+            {% else %}
+                <!-- \\проверяю откликнулся ли через кастомный тег и записываю в переменную// -->
+                {% responded advertisement request.user.author as user_responded %}
+                <!-- Если пользователь уже откликнулся или принят в лобби -->
+                {% if user_responded or request.user.author in advertisement.accepted_authors.all %}
+                    <!-- Если пользователя приняли в лобби -->
+                    {% if request.user.author in advertisement.accepted_authors.all %}
+                        {% if advertisement.chat_id != 0 %}  
+                            <h3>Ваша заявка принята <a href="{% url 'chat' pk=advertisement.chat_id %}" class="advertisement-chat_link">Чат тут</a></h3>
+                        {% else %}
+                            <h3>Ваша заявка принята</h3>
+                        {% endif %}
+                        <hr class="hr-m-bt-15">
+                    {% if advertisement.state != 'FI' %}
+                        <div class="advertisement-accepted_users">
+                            {% for author in advertisement.accepted_authors.all %}
+                                <div class="accepted-user">
+                                    <img class="accepted-user_photo" src="{{author.profile_photo.url}}" alt="" width="25px" height="25px">
+                                    <p class="accepted-user_name" >{{author.user.username}}</p>
+                                    <p >{{author.rating}}</p>
+                                    <img class="accepted-user_star" src="{% static 'images/star.png' %}" alt="" width="20px" height="20px">
+                                    {% if author == request.user.author %}
+                                        {% if advertisement.state != 'IN' %}
+                                        {% else %}
+                                            <a href="{% url 'remove' pk=advertisement.id author_id=author.id %}" class="accepted-user_remove"><img src="{% static 'images/close.png' %}" alt=""></a>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <!-- Если набор закончен и пользователи получили оценку -->
+                        <h1 class="hr-m-bt-15">Все пользователи успешно получили оценку</h1>
+                        <h2 class="hr-m-bt-15">Объявление закрыто</h2>
+                        <div class="advertisement-accepted_users">
+                            {% for author in advertisement.accepted_authors.all %}
+                                {% if author in advertisement.liked_authors.all %}
+                                <div class="accepted-user liked">
+                                    <img class="accepted-user_photo" src="{{author.profile_photo.url}}" alt="" width="25px" height="25px">
+                                    <p class="accepted-user_name" >{{author.user.username}}</p>
+                                    <p >rating +1</p>
+                                    <img class="accepted-user_star" src="{% static 'images/star.png' %}" alt="" width="20px" height="20px">    
+                                </div>
+                                {% elif author in advertisement.disliked_authors.all %}
+                                <div class="accepted-user disliked">
+                                    <img class="accepted-user_photo" src="{{author.profile_photo.url}}" alt="" width="25px" height="25px">
+                                    <p class="accepted-user_name" >{{author.user.username}}</p>
+                                    <p >rating -1</p>
+                                    <img class="accepted-user_star" src="{% static 'images/star.png' %}" alt="" width="20px" height="20px">    
+                                </div>
+                                {% endif %}                            
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    {% else %}
+                        Ваша заявка ожидает рассмотрения 
+                    {% endif %}
+                <!-- Если пользователь не откликался и не принят в лобби -->
+                {% else %}
+                    <form class="response-form" method="post" action="">
+                        {% csrf_token %}
+                        <button class="advertisement-button" name="button" type="submit">Откликнуться</button>
+                        <div class="text_area">
+                            {{ form.message_text}}
+                        </div>
+                    </form>
+                {% endif %}
+            {% endif %}
+            
+        </div>
+    </div>
+{% endblock %}

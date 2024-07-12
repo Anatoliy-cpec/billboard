@@ -1,0 +1,40 @@
+{% load static %}
+<link href="{% static 'css/styles.css' %}" rel="stylesheet" />
+{% block content %}
+    {{ form.non_field_errors | safe }}
+    <div class="registration-wrapper">
+        
+            <div class="registration-container">
+                <input type="hidden" name="remember" value="true" />
+                <form method="post" action="{% url 'account_signup' %}">
+                {% csrf_token %}
+                    <div class="registration-item">
+                        {{ form.username.errors | safe }}
+                        {{ form.email.errors | safe }}
+                        {{ form.password1.errors | safe }}
+                        {{ form.password2.errors | safe }}
+                    </div>
+                    <div class="registration-item">
+                        <label for="id_username">Username</label>
+                        {{ form.username }}
+                    </div>
+                    <div class="registration-item">
+                        <label for="id_email">email</label>
+                        {{ form.email }}
+                    </div>
+                    <div class="registration-item">
+                        <label for="id_password1">Password</label>
+                        {{ form.password1 }}
+                    </div>
+                    <div class="registration-item">
+                        <label for="id_password2">Password confirm</label>
+                        {{ form.password2 }}
+                    </div>
+                    <button type="submit">Принять</button>
+                </form>
+            </div>
+            
+        
+    </div>
+
+{% endblock content %}

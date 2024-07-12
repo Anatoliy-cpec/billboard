@@ -1,0 +1,70 @@
+{% extends 'default.html' %}
+{% load static %}
+
+{% load custom_tags %}
+
+{% block content %}
+    {% if not advertisement.state == 'FI' %}
+            <div class="content-wrapper advertisement-create-wrapper">
+                <form action="" method="post" class="advertisement-create-form" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{form.errors}}
+                        {{form.header}}
+                    <hr class="hr-m-bt-15">
+                        {{form.body}}
+                    <hr class="hr-m-bt-15">
+                    <div class="create-form-item">
+                        {% if advertisement.header_image %}
+                        <p>Текущее изображение: </p>
+                        <a href="{{advertisement.header_image.url}}" >{{advertisement.header_image.url|truncatechars:30}}</a>
+                        {% else %}
+                        <p>Изображение не загружено</p>
+                        {% endif %}
+                        {{form.header_image}}
+                    </div>
+                    <hr class="hr-m-bt-15">
+                    <div class="create-form-item">
+                        {% if advertisement.file_1 %}
+                        <p>Текущий файл: </p>
+                        <a href="{{advertisement.file_1.url}}">{{advertisement.file_1.url|truncatechars:30}}</a>
+                        {% else %}
+                        <p>Файл не загружен</p>
+                        {% endif %}
+                        {{form.file_1}}
+                    </div>
+                    <hr class="hr-m-bt-15">
+                    <div class="create-form-item">
+                        {% if advertisement.file_2 %}
+                        <p>Текущий файл: </p>
+                        <a href="{{advertisement.file_2.url}}">{{advertisement.file_2.url|truncatechars:30}}</a>
+                        {% else %}
+                        <p>Файл не загружен</p>
+                        {% endif %}
+                        {{form.file_2}}
+                    </div>
+                    <hr class="hr-m-bt-15">
+                    <div class="create-form-item">
+                        {% if advertisement.file_3 %}
+                        <p>Текущий файл: </p>
+                        <a href="{{advertisement.file_3.url}}">{{advertisement.file_3.url|truncatechars:30}}</a>
+                        {% else %}
+                        <p>Файл не загружен</p>
+                        {% endif %}
+                        {{form.file_3}}
+                    </div>
+                    <hr class="hr-m-bt-15">
+                    <div class="create-form-item">
+                        <div class="create-form-item_sots">
+                            {{form.slots}}
+                            <img src="{% static 'images/member.png' %}" alt="">
+                        </div> 
+                        {{form.category}}
+                    </div>
+                    <hr class="hr-m-bt-15">
+                    <input class="advertisement-button" type="submit" value="Сохранить">
+                </form>
+            </div>
+    {% else %}
+        <h1>Объявление закрыто</h1>
+    {% endif %}
+{% endblock %}

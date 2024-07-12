@@ -1,0 +1,31 @@
+{% extends 'default.html' %}
+{% load static %}
+
+{% static 'js/main.js' %}
+{% load custom_tags %}
+
+{% block content %}
+<div class="advertisements container">
+    <div class="adverisements-user_top">
+        <h1 class="user-top_header">Ваши переписки</h1>
+        
+        <div class="chat-user_container">
+            {% for chat in chats %}
+                {% if user in chat.users.all %}
+                    <a href="{% url 'chat' pk=chat.id %}">
+                        <div class="chat-user">
+                            {% for user in chat.users.all %}
+                                <img class="accepted-user_photo" src="{{user.author.profile_photo.url}}" alt="" style="width: 25px; height: 25px;">
+                            {% endfor %}
+                        </div>
+                    </a>
+                {% endif %}
+            {% endfor %}    
+        </div> 
+           
+    </div>
+    <div class="content-wrapper">
+        <h2>Тут будут ваши сообщения (страница не обновляется динамически... пока что)</h2>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,126 @@
+{% extends 'default.html' %}
+{% load static %}
+
+{% static 'js/main.js' %}
+{% load custom_tags %}
+
+{% block content %}
+<div class="advertisements container">
+    <div class="adverisements-user_top">
+        <h1 class="user-top_header">топ пользователей</h1>
+        <div class="user-top_item">
+            {% for author in authors|slice:":10" %}
+                <a href="{% url 'profile' pk=author.id %}" class="top-item_a">
+                    <div class="user-top_item__name">
+                        <p>{{author.user.username}}</p>
+                    </div>
+                    <div class="user-top_item__rating">
+                        <p>{{author.rating}}</p>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>        
+    </div>
+    <div class="content-wrapper">
+        <div class="pagination">
+            <span class="step-links">
+                
+                    {% if page_obj.has_previous %}
+                        <a href="?{% url_replace page=1 %}">&laquo; первая</a>
+                        <a href="?{% url_replace page=page_obj.previous_page_number %}">пердыдущая</a>
+                    {% endif %}
+            
+                    <span class="current">
+                        {% if page_obj.has_previous %}
+                            {{ page_obj.previous_page_number}}
+                        {% endif %}
+        
+                        <<{{page_obj.number}}>>
+        
+                        {% if page_obj.has_next %}
+                            {{ page_obj.next_page_number}}
+                        {% endif %}
+                    </span>
+            
+                    {% if page_obj.has_next %}
+                        <a href="?{% url_replace page=page_obj.next_page_number %}">следующая</a>
+                        <a href="?{% url_replace page=page_obj.paginator.num_pages %}">последняя &raquo;</a>
+                    {% endif %}
+            </span>
+        </div>
+        <ul class="advertisements-category">
+            {% for category in categorys %}
+             <li class="advertisements-category_item"><p>{% category_counter category.id %}</p><a href="?category={{category.id}}">{{category}}</a></li>
+            {% endfor %}
+            <li class="advertisements-category_item"><p></p><a href="?">сбросить</a></li>
+        </ul>
+        <div class="advertisements-item_add">
+            <a href="{% url 'advertisement_create' %}"><img src="{% static 'images/add-square.png' %}" alt="">
+            </a>
+        </div>
+        <div class="advertisements-container">
+            {% for post in advertisements %}
+                {% if post.header_image %}
+                <div class="advertisements-item">
+                    {% if post.state == 'FI' %}
+                    <div class="backing"><p>Закрыто</p></div>
+                    {% endif %}
+                    <a href="{{post.id}}" class="advertisements-item_link">
+                            <div class="advertisements-item_body" style="background-image: url('{{ post.header_image.url }}'); border-radius: 16px 16px 0 0;">
+                                <div class="advertisements-item_header" >
+                                    {% if  post.slots > 0 %}
+                                        <h1 class="advertisements-item_header__h1">{{post.header}}</h1><div  class="advertisements-item_header__p" style="background-color: #2CB131;"><p>{{post.slots}}</p></div>
+                                    {% else %}
+                                        <h1 class="advertisements-item_header__h1">{{post.header}}</h1><div  class="advertisements-item_header__p" style="background-color: #D00B0B;"><p>{{post.slots}}</p></div>
+                                    {% endif %}
+                                </div>
+                                <div class="advertisements-item_tags">
+                                    {% for category in post.category.all %}
+                                        <div class="item-tag">{{category}}</div>
+                                    {%endfor%}
+                                </div>
+                            </div>
+                            <hr style="margin-bottom: 10px;">
+                            <div class="advertisements-item_footer">
+                                <p>Создано: {{post.creation_date |date:'d-m-y H:i'}}</p>
+                                <p>Откликов: {% if post.response.count > 0%}{{post.response.count}}{% else %}0{% endif %}</p>
+                            </div>
+                    </a>
+                </div>
+                {% else %}
+                <div class="advertisements-item">
+                    {% if post.state == 'FI' %}
+                    <div class="backing"><p>Закрыто</p></div>
+                    {% endif %}
+                    <a href="{{post.id}}" class="advertisements-item_link">
+                            <div class="advertisements-item_body">
+                                <div class="advertisements-item_header" >
+                                    {% if  post.slots > 0 %}
+                                        <h1 class="advertisements-item_header__h1">{{post.header}}</h1><div  class="advertisements-item_header__p" style="background-color: #2CB131;"><p>{{post.slots}}</p></div>
+                                    {% else %}
+                                        <h1 class="advertisements-item_header__h1">{{post.header}}</h1><div  class="advertisements-item_header__p" style="background-color: #D00B0B;"><p>{{post.slots}}</p></div>
+                                    {% endif %}
+                                </div>
+                                <div class="advertisements-item_text">
+                                    <p>{{post.body}}</p>
+                                </div>
+                                <div class="advertisements-item_tags">
+                                    {% for category in post.category.all %}
+                                        <div class="item-tag">{{category}}</div>
+                                    {%endfor%}
+                                </div>
+                            </div>
+                            <hr style="margin-bottom: 10px;">
+                            <div class="advertisements-item_footer">
+                                <p>Создано: {{post.creation_date |date:'d-m-y H:i'}}</p>
+                                <p>Откликов: {% if post.response.count > 0 %}{{post.response.count}}{% else %} 0 {% endif %}</p>
+                            </div>
+                    </a>
+                </div>
+                {% endif %}
+            {% endfor %}
+            
+        </div>
+    </div>
+</div>
+{% endblock %}

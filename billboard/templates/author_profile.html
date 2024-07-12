@@ -1,0 +1,53 @@
+{% extends 'default.html' %}
+{% load static %}
+
+{% load custom_tags %}
+
+{% block content %}
+
+    
+    <div class="container profile">
+        <div class="pofile-container">
+            <div class="profile-container_header">
+                <div class="profile-image-block" style="background-image: url('{{ author.profile_photo.url }}');">
+                    <div class="profile-image-block_overlay">
+                        <p>{{author.rating}}</p>
+                        <img src="{% static 'images/star.png' %}" alt="">
+                    </div>
+                </div>
+                <div class="profile-info-block">
+                    <p class="info-item">Имя:</p>
+                    {% if author.first_name %}
+                        <p class="info-item field">{{author.first_name}}</p>
+                    {% else %}
+                        <p class="info-item field">Не указано</p>
+                    {% endif %}
+                    
+                    <p class="info-item">Пользователь:</p>
+                    <p class="info-item field">{{author.user.username}}</p>
+                    <p class="info-item">Почта:</p>
+                    <p class="info-item field">{{author.user.email}}</p>
+                </div>
+            </div>
+            <div class="profile-biography_block">
+                {% if author.bio %}
+                    {{author.bio}}
+                {% else %}
+                    Этот пользователь очень таинственный...
+                {% endif %}
+            </div>
+            <div class="profile-edit-block">
+                {% if author.user == request.user %}
+                    <a href="{% url 'edit_profile' pk=author.id %}" class="advertisement-button">Редактировать профиль</a>
+                    <a href="{% url 'account_change_password' %}" class="advertisement-button">Сменить пароль</a>
+                    <a href="{% url 'account_email' %}" class="advertisement-button">Изменить почту</a>
+                    <a href="{% url 'account_logout' %}" class="advertisement-button">Выйти из аккаунта</a>
+                {% endif %}
+            </div>
+
+            
+        </div>
+    </div>
+    
+
+{% endblock %}

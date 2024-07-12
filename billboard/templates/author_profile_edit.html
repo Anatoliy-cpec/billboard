@@ -1,0 +1,36 @@
+{% extends 'default.html' %}
+{% load static %}
+
+{% load custom_tags %}
+
+{% block content %}
+
+    <div class="container profile">
+        <div class="pofile-container edit">
+            <form action="" method="post">
+                    {% csrf_token %}
+                <div class="profile-edit-image">
+                    Ваша фотография:
+                    <a href="{{author.profile_photo.url}}">{{author.profile_photo.url|truncatechars:30}}</a>
+                    Изменить:
+                    {{form.profile_photo}}
+                </div>
+                <hr class="hr-m-bt-15">
+                <div class="profile-edit-name">
+                    <p style="width: 30%;">Ваше имя:</p>
+                    {{form.first_name}}
+                </div>
+                <hr class="hr-m-bt-15">
+                <div class="profile-edit-bio">
+                    Кратко опишите себя
+                    {{form.bio}}
+                </div>
+                <hr class="hr-m-bt-15">
+                <button class="advertisement-button" type="submit">Сохранить</button>
+                {{form.errors}}
+            </form>
+        </div>
+    </div>
+
+
+{% endblock %}

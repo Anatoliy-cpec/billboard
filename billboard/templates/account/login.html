@@ -1,0 +1,57 @@
+{% load static %}
+{% load allauth account %}
+<link href="{% static 'css/styles.css' %}" rel="stylesheet" />
+<div class="registration-wrapper">
+    <div class="registration-container">
+        {% block content %}
+            <div class="registration-item">
+            {% element h1 %}
+                Sign In
+            {% endelement %}
+            </div>
+            {% if not SOCIALACCOUNT_ONLY %}
+                {% setvar link %}
+                    <a href="{{ signup_url }}">
+                    {% endsetvar %}
+                    {% setvar end_link %}
+                    </a>
+                {% endsetvar %}
+                <div class="registration-item">
+                {% element p %}
+                    If you have not created an account yet, then please {{ link }}sign up{{ end_link }} first.
+                {% endelement %}
+                </div>
+                {% url 'account_login' as login_url %}
+                {% element form form=form method="post" action=login_url tags="entrance,login" %}
+                    {% slot body %}
+                        {% csrf_token %}
+                        <div class="registration-item" style="flex-direction: column;">
+                        {% element fields form=form unlabeled=True %}
+                        {% endelement %}
+                        </div>
+                        {{ redirect_field }}
+                    {% endslot %}
+                    {% slot actions %}
+                        <div class="registration-item">
+                        {% element button type="submit" tags="prominent,login" %}
+                            Sign In
+                        {% endelement %}
+                        </div>
+                    {% endslot %}
+                {% endelement %}
+            {% endif %}
+            {% if LOGIN_BY_CODE_ENABLED %}
+                {% element hr %}
+                {% endelement %}
+                {% element h2 %}
+                    {% element button href=request_login_code_url tags="prominent,login,secondary" %}
+                        Mail me a sign-in code
+                    {% endelement %}
+                {% endelement %}
+            {% endif %}
+            {% if SOCIALACCOUNT_ENABLED %}
+                {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
+            {% endif %}
+        {% endblock content %}
+    </div>
+</div>

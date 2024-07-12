@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+{% load static %}
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple app</title>
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
+</head>
+<div class="wrapper">
+    <header>
+    
+        <nav class="header-nav">
+            <div class="nav-logo">
+                <a href="#"><img src="{% static 'images/logo.png' %}" alt="None" width="30px" height="15px"></a>
+                <p>FindMe</p>
+            </div>
+            <div class="nav-header_item">
+                <a href="{% url 'my-advertisements' %}"><img src="{% static 'images/advertisements.png' %}" alt="None" width="24px" height="24px">
+                    <p>Мои объявления</p>
+                </a>
+            </div>
+            <div class="nav-header_item">
+                <a href="{% url 'advertisements' %}"><img src="{% static 'images/advertisements.png' %}" alt="None" width="24px" height="24px">
+                    <p>Объявления</p>
+                </a>
+            </div>
+            <div class="nav-header_item">
+                <a href="{% url 'chats' %}"><img src="{% static 'images/messages.png' %}" alt="None" width="24px" height="24px">
+                    <p>Чат</p>
+                </a>
+            </div>
+            <div class="nav-user_profile">
+                {% if request.user.username %}
+                    <a href="{% url 'profile' pk=request.user.author.id %}" class="profile"><img src="{{ request.user.author.profile_photo.url }}" alt="None" width="45px" height="45px"></a>
+                    <p>{{ request.user.username }}</p>
+                {% else %} 
+                    <a href="{% url 'account_login' %}" class="profile"><img src="{% static 'images/no_avatar.jpg' %}" alt="None" width="45px" height="45px"></a>
+                    <p><a href="{% url 'account_login' %}">Login</a></p> 
+                {% endif %}
+                
+            </div>
+        </nav>
+    </header>
+    <body>
+        {% block content %}
+            
+        {% endblock %}
+    </body>
+    
+    <footer>
+        <script src="{% static 'js/script.js' %}"></script>
+    </footer>
+    
+</div>
+</html>

@@ -1,0 +1,47 @@
+{% extends 'default.html' %}
+{% load static %}
+
+{% load custom_tags %}
+
+{% block content %}     
+        <div class="wrapper response">
+            <a href="{% url 'advertisement' pk=advertisement.id %}" class="response-header">
+                <div class="response-header_header">{{advertisement.header}}</div>
+                <div class="response-header_body">{{advertisement.body}}</div>
+                <div class="response-header_tags">
+                    <p class="response-header_tags__item">Слоты: {{advertisement.slots}}</p>
+                    <p class="response-header_tags__item">ID: {{advertisement.id}}</p>
+                </div>
+            </a>
+            <div class="content-wrapper response">
+                
+                <hr>
+
+                {% if advertisement.response.all %}
+                    {% for response in advertisement.response.all %}
+                        <div class="advertisement-response">
+                            <div class="response-profile">
+                                <img class="response-profile_img" src="{{response.author.profile_photo.url}}" alt="Photo">
+                                <div class="response-profile_rating">
+                                    <p>{{response.author.rating}}</p>
+                                    <img src="{% static 'images/star.png' %}" alt="Star">
+                                </div>
+                                <p>{{response.author.user.username}}</p>
+                            </div>
+                            <div class="response-body">
+                                {{response.message_text}}
+                            </div>
+                            <div class="response-buttons">
+                                <a href="{% url 'accept' pk=advertisement.id response_pk=response.id %}"><div class="button-accept advertisement-button">Принять</div></a>
+                                <a href="{% url 'delete' pk=advertisement.id response_pk=response.id %}"><div class="button-delete advertisement-button">Отклонить</div></a>
+                                <a href="{% url 'profile' pk=response.author.id %}"><div class="button-profile advertisement-button">Профиль</div></a>
+                            </div>
+                        </div>
+                        <hr>
+                    {% endfor %}
+                {% else %}
+                    <p>No responses yet</p>
+                {% endif %}
+            </div>
+        </div>
+{% endblock %}
